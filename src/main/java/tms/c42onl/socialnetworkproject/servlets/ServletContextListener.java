@@ -6,6 +6,8 @@ import org.flywaydb.core.Flyway;
 import tms.c42onl.socialnetworkproject.config.ConnectionProvider;
 import tms.c42onl.socialnetworkproject.config.DatabaseConfig;
 
+import java.util.Collection;
+
 @WebListener
 public class ServletContextListener implements jakarta.servlet.ServletContextListener {
 
@@ -28,6 +30,6 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        sce.getServletContext().removeAttribute("connection");
     }
 }
