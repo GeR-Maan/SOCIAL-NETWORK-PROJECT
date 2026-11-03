@@ -2,6 +2,7 @@ package tms.c42onl.socialnetworkproject.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -32,6 +33,7 @@ import lombok.Setter;
  */
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class DatabaseConfig {
 
     @Getter

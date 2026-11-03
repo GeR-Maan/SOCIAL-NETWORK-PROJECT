@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebListener;
 import org.flywaydb.core.Flyway;
 import tms.c42onl.socialnetworkproject.config.ConnectionProvider;
 import tms.c42onl.socialnetworkproject.config.DatabaseConfig;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
 
 import java.util.Collection;
 
@@ -25,11 +26,14 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
                 .migrate();
 
         ConnectionProvider provider = new ConnectionProvider(config);
-        sce.getServletContext().setAttribute("connection", provider);
+        JDBCManager jdbcManager = new JDBCManager(provider);
+        sce.getServletContext().setAttribute("provider", provider);
+        sce.getServletContext().setAttribute("connection", jdbcManager);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         sce.getServletContext().removeAttribute("connection");
+        sce.getServletContext().removeAttribute("provider");
     }
 }
