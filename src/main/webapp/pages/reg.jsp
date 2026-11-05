@@ -40,8 +40,8 @@
                             type="password"
                             class="form-control"
                             id="password"
-                            name="password" >
-                            value = "${not empty invalidUser ? invalidUser.password : ''}"
+                            name="password"
+                            value = "${not empty invalidUser ? invalidUser.password : ''}">
                             </div>
 
                         <div class="mb-3">
