@@ -81,7 +81,7 @@ public class DatabaseConfig {
     public static String requiredEnv(String name) {
         String value = System.getenv(name);
         if(value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Не задана переменная окружения %s".formatted(value));
+            throw new IllegalArgumentException("Не задана переменная окружения %s".formatted(name));
         }
         return value;
     }

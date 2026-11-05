@@ -16,7 +16,6 @@ public class JDBCManagerDemo {
     }
 
     public void testJDBCConnection() throws SQLException {
-
         String sql = "SELECT * FROM users";
 
         try(Connection connection = provider.getConnection();
@@ -38,9 +37,10 @@ public class JDBCManagerDemo {
                 preparedStatement.executeUpdate();
 
                 preparedStatement.setString(1, "Ivan");
-                preparedStatement.setString(2, "ivan_test_2");
+                preparedStatement.setString(2, "ivan_test_1");
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
+                System.out.println("tests do not completed");
                 throw new RuntimeException(e);
             }
         });

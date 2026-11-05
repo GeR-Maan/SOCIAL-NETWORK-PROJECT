@@ -12,6 +12,7 @@ public class JDBCManager  {
        this.provider = provider;
     }
 
+    @FunctionalInterface
     public interface PostgresWork {
         public void execute(Connection connection);
     }

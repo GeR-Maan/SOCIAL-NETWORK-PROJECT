@@ -27,7 +27,8 @@ public class TestServlet extends HttpServlet {
 
             resp.getWriter().println("tests completed");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            resp.getWriter().println("tests do not completed");
+            //throw new RuntimeException(e);
         }
     }
 }

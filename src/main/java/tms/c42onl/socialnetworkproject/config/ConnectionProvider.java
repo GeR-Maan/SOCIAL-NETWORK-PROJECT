@@ -20,7 +20,7 @@ public class ConnectionProvider {
                     databaseConfig.getPassword()
             );
         } catch (SQLException e) {
-            throw new RuntimeException("Something wrong");
+            throw new RuntimeException("Ошибка подключения к PostgreSQL", e);
         }
     }
 }
