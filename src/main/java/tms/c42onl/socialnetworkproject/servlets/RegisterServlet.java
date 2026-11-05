@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tms.c42onl.socialnetworkproject.models.User;
-import tms.c42onl.socialnetworkproject.services.RegistrationException;
+import tms.c42onl.socialnetworkproject.exceptions.RegistrationException;
 import tms.c42onl.socialnetworkproject.services.UserService;
 import tms.c42onl.socialnetworkproject.storages.InMemoryUserStorage;
 import tms.c42onl.socialnetworkproject.storages.UserStorage;

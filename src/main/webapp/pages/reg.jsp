@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
     <head>
         <title>Registration</title>
@@ -9,36 +10,42 @@
         <div class="container">
             <div class="row justify-content-center mt-5">
                 <div class="col-4">
-                    <p>Registration</p>
+                    <p>Регистрация</p>
                 </div>
             </div>
 
-
-
             <div class="row justify-content-center mt-5">
                 <div class="col-4">
+
+                    <c:if test = "${not empty errorMessage}">
+                        <div class = "alert theme-danger" role = "alert">
+                            ${errorMessage}
+                        </div>
+                    </c:if>
+
                     <form action="/reg" method="post">
                         <div class="mb-3">
-                            <label for="login" class="form-label">Login</label>
+                            <label for="login" class="form-label">Логин</label>
                             <input
                             type="text"
                             class="form-control"
                             name="login"
                             id="login"
-                            value = "${not empty invalidUser ? invalidUser.login : ''}" required>
+                            value = "${not empty invalidUser ? invalidUser.login : ''}" >
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label">Пароль</label>
                             <input
                             type="password"
                             class="form-control"
                             id="password"
-                            name="password" required>
+                            name="password" >
+                            value = "${not empty invalidUser ? invalidUser.password : ''}"
                             </div>
 
                         <div class="mb-3">
-                            <label for="firstName" class="form-label">Name</label>
+                            <label for="firstName" class="form-label">Имя</label>
                             <input
                             type="text"
                             class="form-control"
@@ -48,7 +55,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="lastName" class="form-label">Last Name</label>
+                            <label for="lastName" class="form-label">Фамилия</label>
                             <input
                             type="text"
                             class="form-control"
@@ -58,7 +65,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="birthDate" class="form-label">Birthday</label>
+                            <label for="birthDate" class="form-label">Дата рождения</label>
                             <input
                             type="date"
                             class="form-control"
@@ -67,11 +74,11 @@
                             value = "${not empty invalidUser ? invalidUser.birthDate : ''}">
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                        <button type="submit" class="btn btn-primary w-100">Создать аккаунт</button>
                     </form>
 
                     <div class="mt-3 text-center">
-                        <a href="#">Already have an account? Log in</a>
+                        <a href="#">Уже есть аккаунт? Войти</a>
                     </div>
                 </div>
             </div>

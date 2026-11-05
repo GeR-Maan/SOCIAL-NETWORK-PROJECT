@@ -1,4 +1,4 @@
-package tms.c42onl.socialnetworkproject.services;
+package tms.c42onl.socialnetworkproject.exceptions;
 
 import lombok.Getter;
 import tms.c42onl.socialnetworkproject.models.User;
