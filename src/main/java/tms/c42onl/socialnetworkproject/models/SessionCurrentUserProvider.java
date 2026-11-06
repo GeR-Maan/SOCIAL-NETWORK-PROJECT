@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpSession;
 
 public class SessionCurrentUserProvider implements CurrentUserProvider {
 
-    public static final String SESSION_USER_KEY = "currentUser";
+    public static final String SESSION_USER_KEY = "userId";
 
     private final HttpServletRequest request;
 
@@ -24,8 +24,8 @@ public class SessionCurrentUserProvider implements CurrentUserProvider {
 
         Object attribute = session.getAttribute(SESSION_USER_KEY);
 
-        if (attribute instanceof PublicUser user) {
-            return user;
+        if (attribute instanceof Long userId) {
+            return null;
         }
 
         return null;
