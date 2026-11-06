@@ -11,11 +11,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+//Управление реакцией на посты в БД
 public class ReactionStorage {
-    //Сохранить/обновить реакцию
+
+    //Сохраняет или обновляет реакцию
     public void saveReaction(Connection connection, Reaction reaction) {
 
+        // Если пользователь убрал реакцию удаляем запись из БД
         if (reaction.getType().equals(NOTHING)) {
             deleteReaction(connection, reaction);
             return;
@@ -34,10 +36,11 @@ public class ReactionStorage {
             preparedStatement.setString(3, reaction.getType().toString());
             preparedStatement.execute();
         }catch (SQLException e){
-            e.printStackTrace();
+            e.printStackTrace();    // TODO: Изменить обработку ошибки
         }
     }
-    //Удалить реакцию
+
+    //Удаляет реакцию на конкретный пост из БД
     public void deleteReaction(Connection connection, Reaction reaction) {
         String sqlQuery = """
                             DELETE FROM reactions 
@@ -48,10 +51,11 @@ public class ReactionStorage {
             preparedStatement.setLong(2,reaction.getPostId());
             preparedStatement.execute();
         }catch (SQLException e){
-            e.printStackTrace();
+            e.printStackTrace();     // TODO: Изменить обработку ошибки
         }
     }
-    //Узнать реакцию текущего юзера.
+
+    //Возвращает тип реакции на указанный пост
     public ReactionType getUserReaction(Connection connection, Long userId, Long postId){
         String sqlQuery = """
                             SELECT reaction_type
@@ -65,17 +69,20 @@ public class ReactionStorage {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
+                // Если запись найдена, конвертируем строку из БД в Enum
                 return ReactionType.valueOf(resultSet.getString("reaction_type"));
             }
             else {
+                // Если записи нет, значит пользователь еще не оставлял реакцию
                 return NOTHING;
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            e.printStackTrace();     // TODO: Изменить обработку ошибки
         }
         return null;
     }
-    //Узнать счетчики (лайки/дизлайки)
+
+    //Возвращает общее количество лайков и дизлайков для указанного поста.
     public ReactionCount getCounters(Connection connection, Long postId){
         String sqlQuery = """
                             SELECT
@@ -93,13 +100,10 @@ public class ReactionStorage {
             if (resultSet.next()) {
                 reactionCount.setCountLike(resultSet.getLong("count_like"));
                 reactionCount.setCountDislike(resultSet.getLong("count_dislike"));
-                return reactionCount;
             }
-            else {
-                return reactionCount;
-            }
+            return reactionCount;
         }catch (SQLException e){
-            e.printStackTrace();
+            e.printStackTrace();     // TODO: Изменить обработку ошибки
         }
         return null;
     }
