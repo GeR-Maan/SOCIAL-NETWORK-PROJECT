@@ -18,7 +18,6 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto">
 
-                <%-- Общая лента доступна всем --%>
                 <li class="nav-item">
                     <a class="nav-link"
                        href="${pageContext.request.contextPath}/posts">
@@ -26,7 +25,6 @@
                     </a>
                 </li>
 
-                <%-- Только для авторизованного пользователя --%>
                 <c:if test="${not empty currentUser}">
                     <li class="nav-item">
                         <a class="nav-link"
@@ -70,7 +68,6 @@
                         </li>
                     </c:when>
 
-                    <%-- Авторизованный пользователь --%>
                     <c:otherwise>
                         <li class="nav-item">
                             <span class="navbar-text me-3">
