@@ -13,7 +13,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/home.jsp")
+        request.getRequestDispatcher("/WEB-IN/views/home.jsp")
                 .forward(request, response);
     }
 }

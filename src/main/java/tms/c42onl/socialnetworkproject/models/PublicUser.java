@@ -31,8 +31,8 @@ public class PublicUser {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PublicUser)) return false;
-        PublicUser that = (PublicUser) o;
-        return Objects.equals(id, that.id);
+        PublicUser other = (PublicUser) o;
+        return Objects.equals(id, other.id);
     }
 
     @Override

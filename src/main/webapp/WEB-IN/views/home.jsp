@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
-<jsp:include page="/WEB-INF/views/common/header.jsp" />
-<jsp:include page="/WEB-INF/views/common/navbar.jsp" />
+<jsp:include page="/WEB-IN/views/common/header.jsp" />
+<jsp:include page="/WEB-IN/views/common/navbar.jsp" />
 
 <div class="container">
   <div class="row">
@@ -36,4 +36,4 @@
   </div>
 </div>
 
-<jsp:include page="/WEB-INF/views/common/footer.jsp" />
+<jsp:include page="/WEB-IN/views/common/footer.jsp" />
