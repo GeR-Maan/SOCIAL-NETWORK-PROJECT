@@ -23,12 +23,10 @@ public class TestServlet extends HttpServlet {
 
         try {
             managerDemo.testJDBCConnection();
-            managerDemo.testTransaction();
-
-            resp.getWriter().println("tests completed");
+            managerDemo.testTransactionWithCommit();
+            managerDemo.testTransactionWithRollback();
         } catch (SQLException e) {
-            resp.getWriter().println("tests do not completed");
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 }

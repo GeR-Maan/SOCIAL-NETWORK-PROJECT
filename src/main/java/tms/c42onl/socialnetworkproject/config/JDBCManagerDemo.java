@@ -28,7 +28,7 @@ public class JDBCManagerDemo {
 
     }
 
-    public void testTransaction() {
+    public void testTransactionWithCommit() {
         jdbcManager.execute(connection -> {
             String sql1 = "INSERT INTO users ( name, username) VALUES (?, ?)";
             try(PreparedStatement preparedStatement = connection.prepareStatement(sql1)) {
@@ -40,7 +40,23 @@ public class JDBCManagerDemo {
                 preparedStatement.setString(2, "ivan_test_1");
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                System.out.println("tests do not completed");
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void testTransactionWithRollback() {
+        jdbcManager.execute(connection -> {
+            String sql1 = "INSERT INTO users ( name, username) VALUES (?, ?)";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(sql1)) {
+                preparedStatement.setString(1, "Zhenya");
+                preparedStatement.setString(2, "zhenya_test_1");
+                preparedStatement.executeUpdate();
+
+                preparedStatement.setString(1, "Ivan");
+                preparedStatement.setString(2, "zhenya_test_1");
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });

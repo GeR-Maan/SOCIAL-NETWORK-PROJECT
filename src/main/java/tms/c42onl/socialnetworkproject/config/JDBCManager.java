@@ -23,9 +23,11 @@ public class JDBCManager  {
             try {
                 postgresWork.execute(connection);
                 connection.commit();
+                System.out.println("commit successful");
             } catch (SQLException | RuntimeException e) {
                 try {
                     connection.rollback();
+                    System.out.println("rollback successful");
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
