@@ -2,7 +2,6 @@ package tms.c42onl.socialnetworkproject.models;
 
 import java.util.Objects;
 
-
 public class PublicUser {
 
     private final Long id;
