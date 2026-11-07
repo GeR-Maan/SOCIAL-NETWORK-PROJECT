@@ -11,8 +11,8 @@ import lombok.Setter;
 @Setter
 
 public class Reaction {
-    private Long id;
-    private Long userId;
-    private Long postId;
-    private ReactionType type;
+    private Long id;            // id записи реакции в БД
+    private Long userId;        // id пользователя оставившего реакцию
+    private Long postId;        // id поста на который оставили реакцию
+    private ReactionType type;  // тип поставленной реакции
 }

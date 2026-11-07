@@ -1,6 +1,7 @@
 package tms.c42onl.socialnetworkproject.service;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import tms.c42onl.socialnetworkproject.models.reactions.Reaction;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
 import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
@@ -9,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Connection;
 
 @AllArgsConstructor
-
 // Сервис для работы с реакциями
 public class ReactionService {
     // Хранилище для работы с БД
