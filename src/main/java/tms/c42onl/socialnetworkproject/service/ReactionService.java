@@ -16,12 +16,12 @@ public class ReactionService {
     private final ReactionStorage reactionStorage;
 
     // Изменяет или устанавливает реакцию на пост
-    public void changeReaction(Long userId, Long postId, String reactionTypeString) {
+    public boolean changeReaction(Long userId, Long postId, String reactionTypeString) {
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             // Проверка на существование поста
             if (!reactionStorage.postExists(connection, postId)){
                 System.out.println("Пост не найден!");
-                return;
+                return false;
             }
 
             ReactionType reactionType;
@@ -29,7 +29,7 @@ public class ReactionService {
                 reactionType = ReactionType.valueOf(reactionTypeString.toUpperCase());
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());      // TODO: Изменить обработку ошибки
-                return;
+                return false;
             }
             if(reactionType == reactionStorage.getUserReaction(connection, userId, postId)) {
                 reactionType = ReactionType.NOTHING;
@@ -38,11 +38,14 @@ public class ReactionService {
             Reaction reaction = new Reaction(null, userId, postId, reactionType);
 
             reactionStorage.saveReaction(connection, reaction);
+            return true;
         } catch (SQLException e){
             e.printStackTrace();     // TODO: Изменить обработку ошибки
         }
+        return false;
     }
 
+    //Получает текущую реакцию пользователя
     public ReactionType getUserReaction(Long userId, Long postId){
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             return reactionStorage.getUserReaction(connection, userId, postId);
@@ -52,6 +55,7 @@ public class ReactionService {
         return ReactionType.NOTHING;
     }
 
+    //Получает количество реакций
     public ReactionCount getCounters(Long postId){
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             return reactionStorage.getCounters(connection, postId);
