@@ -42,6 +42,7 @@ public class ReactionServlet extends HttpServlet {
         }catch (Exception e){
             e.printStackTrace();
             request.getSession().setAttribute("error", "Произошла ошибка на сервере");
+            response.sendRedirect("/reaction?postId=" + postId);
         }
     }
 
@@ -49,7 +50,7 @@ public class ReactionServlet extends HttpServlet {
     // Обрабатывает GET-запрос для получения статистики реакций по конкретному посту.
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("isAuthorized", request.getSession().getAttribute("user"));
-        request.setAttribute("isAuthorized", true); //TODO: убрать эту строку
+        //request.setAttribute("isAuthorized", true); //TODO: убрать эту строку
 
         Long userId = 1L;    // TODO: настроить брать из сессии
         Long postId = Long.parseLong(request.getParameter("postId"));
@@ -67,8 +68,7 @@ public class ReactionServlet extends HttpServlet {
         }catch (Exception e){
             e.printStackTrace();
             request.getSession().setAttribute("error", "Произошла ошибка загрузки данных");
-        }finally {
-            getServletContext().getRequestDispatcher("/pages/reactions.jsp").forward(request, response);
         }
+        getServletContext().getRequestDispatcher("/pages/reactions.jsp").forward(request, response);
     }
 }
