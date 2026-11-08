@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/tms/c42onl/socialnetworkproject/storages/JdbcUserAuthStorage.java" value="9a6a41ae-0555-4714-8d10-521a10c4ab92" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/db/migration/V1__create_users_table.sql" value="9a6a41ae-0555-4714-8d10-521a10c4ab92" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/04931713-54fe-46d9-b408-8426413743ab/console.sql" value="04931713-54fe-46d9-b408-8426413743ab" />
   </component>
 </project>
