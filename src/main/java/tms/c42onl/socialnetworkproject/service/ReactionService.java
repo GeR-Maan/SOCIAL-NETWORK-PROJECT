@@ -1,6 +1,7 @@
 package tms.c42onl.socialnetworkproject.service;
 
 import lombok.AllArgsConstructor;
+import tms.c42onl.socialnetworkproject.exceptions.ReactionException;
 import tms.c42onl.socialnetworkproject.models.reactions.Reaction;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionCount;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
@@ -20,7 +21,6 @@ public class ReactionService {
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             // Проверка на существование поста
             if (!reactionStorage.postExists(connection, postId)){
-                System.out.println("Пост не найден!");
                 return false;
             }
 
@@ -28,8 +28,7 @@ public class ReactionService {
             try {
                 reactionType = ReactionType.valueOf(reactionTypeString.toUpperCase());
             } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());      // TODO: Изменить обработку ошибки
-                return false;
+                throw new ReactionException("Ошибка при установке/изменении реакции", e);
             }
             if(reactionType == reactionStorage.getUserReaction(connection, userId, postId)) {
                 reactionType = ReactionType.NOTHING;
@@ -40,9 +39,8 @@ public class ReactionService {
             reactionStorage.saveReaction(connection, reaction);
             return true;
         } catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при установке/изменении реакции", e);
         }
-        return false;
     }
 
     //Получает текущую реакцию пользователя
@@ -50,9 +48,8 @@ public class ReactionService {
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             return reactionStorage.getUserReaction(connection, userId, postId);
         } catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при получении реакции", e);
         }
-        return ReactionType.NOTHING;
     }
 
     //Получает количество реакций
@@ -60,8 +57,7 @@ public class ReactionService {
         try(Connection connection = ConnectionManager.getConnection()){     // TODO: Изменить при выяснении установки
             return reactionStorage.getCounters(connection, postId);
         } catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при получении количества реакции", e);
         }
-        return null;
     }
 }

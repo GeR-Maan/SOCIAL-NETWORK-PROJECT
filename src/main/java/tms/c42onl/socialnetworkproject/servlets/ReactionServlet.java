@@ -33,11 +33,16 @@ public class ReactionServlet extends HttpServlet {
         Long postId = Long.parseLong(request.getParameter("postId"));
         String reactionType = request.getParameter("reactionType");
 
-        boolean isSave = reactionService.changeReaction(userId, postId, reactionType);
-        if(!isSave){
-            request.getSession().setAttribute("error", "Не удалось поставить реакцию");
+        try {
+            boolean isSave = reactionService.changeReaction(userId, postId, reactionType);
+            if (!isSave) {
+                request.getSession().setAttribute("error", "Не удалось поставить реакцию");
+            }
+            response.sendRedirect("/reaction?postId=" + postId);
+        }catch (Exception e){
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Произошла ошибка на сервере");
         }
-        response.sendRedirect("/reaction?postId=" + postId);
     }
 
     @Override
@@ -49,16 +54,21 @@ public class ReactionServlet extends HttpServlet {
         Long userId = 1L;    // TODO: настроить брать из сессии
         Long postId = Long.parseLong(request.getParameter("postId"));
 
-        ReactionCount reactionCount = reactionService.getCounters(postId);
-        long countLike = reactionCount.getCountLike();
-        long countDislike = reactionCount.getCountDislike();
+        try {
+            ReactionCount reactionCount = reactionService.getCounters(postId);
+            long countLike = reactionCount.getCountLike();
+            long countDislike = reactionCount.getCountDislike();
 
-        ReactionType reactionType = reactionService.getUserReaction(userId, postId);
+            ReactionType reactionType = reactionService.getUserReaction(userId, postId);
 
-        request.setAttribute("countLike", countLike);
-        request.setAttribute("countDislike", countDislike);
-        request.setAttribute("reactionType", reactionType);
-
-        getServletContext().getRequestDispatcher("/pages/reactions.jsp").forward(request, response);
+            request.setAttribute("countLike", countLike);
+            request.setAttribute("countDislike", countDislike);
+            request.setAttribute("reactionType", reactionType);
+        }catch (Exception e){
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Произошла ошибка загрузки данных");
+        }finally {
+            getServletContext().getRequestDispatcher("/pages/reactions.jsp").forward(request, response);
+        }
     }
 }

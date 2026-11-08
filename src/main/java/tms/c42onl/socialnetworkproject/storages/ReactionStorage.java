@@ -1,5 +1,6 @@
 package tms.c42onl.socialnetworkproject.storages;
 
+import tms.c42onl.socialnetworkproject.exceptions.ReactionException;
 import tms.c42onl.socialnetworkproject.models.reactions.Reaction;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionCount;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
@@ -36,7 +37,7 @@ public class ReactionStorage {
             preparedStatement.setString(3, reaction.getType().toString());
             preparedStatement.execute();
         }catch (SQLException e){
-            e.printStackTrace();    // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при сохранении реакции", e);
         }
     }
 
@@ -51,7 +52,7 @@ public class ReactionStorage {
             preparedStatement.setLong(2,reaction.getPostId());
             preparedStatement.execute();
         }catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при удалении реакции", e);
         }
     }
 
@@ -77,9 +78,8 @@ public class ReactionStorage {
                 return NOTHING;
             }
         }catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при получении типа реакции", e);
         }
-        return null;
     }
 
     //Возвращает общее количество лайков и дизлайков для указанного поста.
@@ -103,9 +103,8 @@ public class ReactionStorage {
             }
             return reactionCount;
         }catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при получении количества реакции", e);
         }
-        return null;
     }
 
     // Проверяет существование поста
@@ -123,8 +122,7 @@ public class ReactionStorage {
             }
             return false;
         }catch (SQLException e){
-            e.printStackTrace();     // TODO: Изменить обработку ошибки
+            throw new ReactionException("Ошибка при проверке существовании реакции", e);
         }
-        return false;
     }
 }
