@@ -107,4 +107,24 @@ public class ReactionStorage {
         }
         return null;
     }
+
+    // Проверяет существование поста
+    public boolean postExists(Connection connection, Long postId){
+        String sqlQuery = """
+                            SELECT COUNT(*) FROM posts WHERE id = ?
+                          """;
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())){
+            preparedStatement.setLong(1,postId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getLong(1) > 0;
+            }
+            return false;
+        }catch (SQLException e){
+            e.printStackTrace();     // TODO: Изменить обработку ошибки
+        }
+        return false;
+    }
 }

@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tms.c42onl.socialnetworkproject.models.reactions.ReactionCount;
+import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
 import tms.c42onl.socialnetworkproject.service.ReactionService;
 import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
 
@@ -29,17 +31,24 @@ public class ReactionServlet extends HttpServlet {
         String reactionType = request.getParameter("reactionType");
 
         reactionService.changeReaction(userId, postId, reactionType);
-        response.sendRedirect(request.getHeader("referer"));
+        response.sendRedirect("/reaction?postId=" + postId);
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        response.getWriter().println("<html><body>");
-        response.getWriter().println("<h2>Тест лайков</h2>");
-        response.getWriter().println("<form action='/reaction' method='POST'>");
-        response.getWriter().println("<input type='text' name='postId' value='1'>");
-        response.getWriter().println("<input type='text' name='reactionType' value='LIKE'>");
-        response.getWriter().println("<button type='submit'>Отправить лайк</button>");
-        response.getWriter().println("</form></body></html>");
+        Long userId = 1L;    // TODO: настроить брать из сессии
+        Long postId = Long.parseLong(request.getParameter("postId"));
+
+        ReactionCount reactionCount = reactionService.getCounters(postId);
+        long countLike = reactionCount.getCountLike();
+        long countDislike = reactionCount.getCountDislike();
+
+        ReactionType reactionType = reactionService.getUserReaction(userId, postId);
+
+        request.setAttribute("countLike", countLike);
+        request.setAttribute("countDislike", countDislike);
+        request.setAttribute("reactionType", reactionType);
+
+        getServletContext().getRequestDispatcher("/pages/reactions.jsp").forward(request, response);
     }
 }
