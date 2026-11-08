@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.exceptions.AuthException;
 import tms.c42onl.socialnetworkproject.models.User;
 import tms.c42onl.socialnetworkproject.services.UserAuthService;
@@ -25,9 +26,9 @@ public class LoginServlet extends HttpServlet {
     @Override
     public void init() {
         //  подключений из контекста (TMS-32)
-//        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
+        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
 
-        JdbcUserAuthStorage storage = new JdbcUserAuthStorage();
+        JdbcUserAuthStorage storage = new JdbcUserAuthStorage(jdbcManager);
 //
         this.authService = new UserAuthService(storage);
     }
