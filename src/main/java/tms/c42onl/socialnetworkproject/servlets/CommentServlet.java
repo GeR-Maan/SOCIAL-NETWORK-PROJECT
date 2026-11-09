@@ -12,7 +12,7 @@ import java.io.IOException;
 import jakarta.servlet.ServletException;
 
 @WebServlet("/comments")
-public class CommentServlet extends HttpServlet {
+public class    CommentServlet extends HttpServlet {
     private CommentService commentService;
 
     @Override
