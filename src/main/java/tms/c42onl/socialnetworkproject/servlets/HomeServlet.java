@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebServlet("") // Пустая строка означает точный корень "/" сайта
+@WebServlet("/")
 public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -22,7 +22,7 @@ public class HomeServlet extends HttpServlet {
         }
 
 
-        // Перенаправляем запрос внутрь WEB-INF на нашу JSP
+        // TMS 30 home
         req.getRequestDispatcher("/pages/index.jsp").forward(req, resp);
     }
 }

@@ -71,7 +71,7 @@
 
             <li class="nav-item">
               <a class="nav-link"
-                 href="${pageContext.request.contextPath}/register">
+                 href="${pageContext.request.contextPath}/reg">
                 Регистрация
               </a>
             </li>

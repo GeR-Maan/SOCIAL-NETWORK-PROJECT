@@ -24,7 +24,7 @@ public class LogoutServlet extends HttpServlet {
         if (session != null) {
             session.invalidate(); // ТЗ: полное удаление сессии
         }
-        // Редирект на страницу входа
+        // редирект на страницу входа
         resp.sendRedirect(req.getContextPath() + "/login");
     }
 }

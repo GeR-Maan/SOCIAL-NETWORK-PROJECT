@@ -5,12 +5,7 @@
 <jsp:include page="/pages/common/navbar.jsp" />
 
 
-
-
-
-
-
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="card shadow-sm" style="width: 24rem;">
         <div class="card-body p-4">
             <h4 class="card-title text-center mb-4">Вход</h4>
@@ -35,13 +30,11 @@
             <hr class="my-3">
             <p class="text-center mb-0 small">
                 Нет аккаунта?
-                <!-- Ссылка на  TMS-25 (/reg) -->
+                <!--   TMS-25 (/reg) -->
                 <a href="${pageContext.request.contextPath}/reg">Зарегистрироваться</a>
             </p>
         </div>
     </div>
-
-
-
+</div>
 
 <jsp:include page="/pages/common/footer.jsp" />
