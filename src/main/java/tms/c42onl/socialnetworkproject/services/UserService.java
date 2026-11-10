@@ -23,7 +23,7 @@ public class UserService {
             throw new RegistrationException("Пожалуйста заполните все поля", tempUser);
         }
 
-        if (userStorage.existsByLogin(login)){
+        if (userStorage.findByLogin(login).isPresent()){
             throw new RegistrationException("Этот логин уже занят. Пожалуйста выберите другой.", tempUser);
         }
 
