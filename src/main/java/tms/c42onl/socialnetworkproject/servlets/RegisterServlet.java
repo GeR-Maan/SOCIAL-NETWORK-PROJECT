@@ -5,13 +5,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.models.User;
 import tms.c42onl.socialnetworkproject.exceptions.RegistrationException;
 import tms.c42onl.socialnetworkproject.services.UserService;
-//import tms.c42onl.socialnetworkproject.storages.JbdcUserStorage;
-//import tms.c42onl.socialnetworkproject.storages.UserStorage;
-//import tms.c42onl.socialnetworkproject.storages.JbdcUserStorage;
-//import tms.c42onl.socialnetworkproject.storages.UserStorage;
+import tms.c42onl.socialnetworkproject.storages.JbdcUserStorage;
+import tms.c42onl.socialnetworkproject.storages.UserStorage;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,10 +24,9 @@ public class RegisterServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-//        TODO: TMS-32
-//        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
-//        UserStorage userStorage = new JbdcUserStorage(jdbcManager);
-//        this.userService = new UserService(userStorage);
+        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
+        UserStorage userStorage = new JbdcUserStorage(jdbcManager);
+        this.userService = new UserService(userStorage);
     }
 
     @Override
