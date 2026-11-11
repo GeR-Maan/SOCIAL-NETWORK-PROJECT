@@ -11,9 +11,12 @@
 <main class="container py-5 text-center" style="max-width: 640px;">
     <h1 class="h4 mb-3">Публикация не найдена</h1>
     <p class="text-muted">
-        Публикация с идентификатором <strong>${missingPostId}</strong> не существует или была удалена.
+        Публикация с идентификатором <strong>${missingPostId}</strong>
+        не существует или была удалена.
     </p>
-    <a href="${pageContext.request.contextPath}/feed" class="btn btn-primary">Вернуться к ленте</a>
+    <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
+        Вернуться к ленте
+    </a>
 </main>
 </body>
 </html>

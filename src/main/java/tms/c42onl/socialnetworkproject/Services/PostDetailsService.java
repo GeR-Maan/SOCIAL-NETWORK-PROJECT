@@ -1,5 +1,4 @@
-package tms.c42onl.socialnetworkproject.Services;
-
+package tms.c42onl.socialnetworkproject.services;
 import tms.c42onl.socialnetworkproject.models.PostPage;
 
 public interface PostDetailsService {
