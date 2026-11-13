@@ -1,4 +1,4 @@
-package tms.c42onl.socialnetworkproject.servlets;
+package tms.c42onl.socialnetworkproject.servlet;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.annotation.WebListener;
@@ -6,8 +6,6 @@ import org.flywaydb.core.Flyway;
 import tms.c42onl.socialnetworkproject.config.ConnectionProvider;
 import tms.c42onl.socialnetworkproject.config.DatabaseConfig;
 import tms.c42onl.socialnetworkproject.config.JDBCManager;
-
-import java.util.Collection;
 
 @WebListener
 public class ServletContextListener implements jakarta.servlet.ServletContextListener {
@@ -22,6 +20,7 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
                         config.getUsername(),
                         config.getPassword()
                 )
+                .baselineOnMigrate(true)
                 .load()
                 .migrate();
 

@@ -1,7 +1,7 @@
-package tms.c42onl.socialnetworkproject.storages;
+package tms.c42onl.socialnetworkproject.storage;
 
 import tms.c42onl.socialnetworkproject.config.JDBCManager;
-import tms.c42onl.socialnetworkproject.models.User;
+import tms.c42onl.socialnetworkproject.model.User;
 
 import java.sql.*;
 import java.time.LocalDate;
