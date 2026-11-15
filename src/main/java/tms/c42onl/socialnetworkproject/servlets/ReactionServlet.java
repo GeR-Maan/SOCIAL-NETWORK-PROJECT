@@ -22,8 +22,7 @@ public class ReactionServlet extends HttpServlet {
     //Создаёт единственные экземпляры хранилища и сервиса
     public void init() throws ServletException {
         super.init();
-        ReactionStorage reactionStorage = new ReactionStorage();
-        this.reactionService = new ReactionService(reactionStorage);
+        this.reactionService = ReactionService.getReactionService();
     }
 
     @Override
