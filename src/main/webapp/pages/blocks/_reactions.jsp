@@ -1,3 +1,6 @@
+<%-- Для подключения блока лайков и дизлайков(TMS-28 и TMS-30) подключить с помощью: --%>
+<%-- <jsp:include page="/pages/blocks/_reactions.jsp" /> --%>
+
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

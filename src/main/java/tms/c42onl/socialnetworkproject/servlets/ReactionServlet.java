@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionCount;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
 import tms.c42onl.socialnetworkproject.service.ReactionService;
-import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
 
 import java.io.IOException;
 // Сервлет для обработки HTTP-запросов, связанных с реакциями на посты.
@@ -28,8 +27,14 @@ public class ReactionServlet extends HttpServlet {
     @Override
     // Обрабатывает POST-запрос для добавления, изменения или удаления реакции.
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long userId = 1L;    // TODO: настроить брать из сессии
+        Long userId = (Long) request.getSession().getAttribute("userId");
         Long postId = Long.parseLong(request.getParameter("postId"));
+        if (userId == null) {
+            request.getSession().setAttribute("error", "Необходимо войти в систему");
+            response.sendRedirect("/reaction?postId=" + postId);
+            return;
+        }
+
         String reactionType = request.getParameter("reactionType");
 
         try {
@@ -48,10 +53,10 @@ public class ReactionServlet extends HttpServlet {
     @Override
     // Обрабатывает GET-запрос для получения статистики реакций по конкретному посту.
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("isAuthorized", request.getSession().getAttribute("user"));
-        //request.setAttribute("isAuthorized", true); //TODO: убрать эту строку
+        Long userId = (Long) request.getSession().getAttribute("userId");
+        boolean isAuthorized = (userId != null);
+        request.setAttribute("isAuthorized", isAuthorized);
 
-        Long userId = 1L;    // TODO: настроить брать из сессии
         Long postId = Long.parseLong(request.getParameter("postId"));
 
         try {
@@ -59,7 +64,10 @@ public class ReactionServlet extends HttpServlet {
             long countLike = reactionCount.getCountLike();
             long countDislike = reactionCount.getCountDislike();
 
-            ReactionType reactionType = reactionService.getUserReaction(userId, postId);
+            ReactionType reactionType = ReactionType.NOTHING;
+            if (userId != null) {
+                reactionType = reactionService.getUserReaction(userId, postId);
+            }
 
             request.setAttribute("countLike", countLike);
             request.setAttribute("countDislike", countDislike);

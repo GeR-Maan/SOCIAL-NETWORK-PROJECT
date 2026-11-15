@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//Временный класс для получения соединения с бд
+//TODO: Заменить на ConnectionProvider из TMS-32
 //TODO: Удалить
-public class ConnectionManager {
+public class ConnectionProvider {
     public static Connection getConnection() throws SQLException {
         String url = System.getProperty("DB_URL");
         String username = System.getProperty("DB_USERNAME");
