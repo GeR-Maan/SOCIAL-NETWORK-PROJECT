@@ -1,4 +1,4 @@
-package tms.c42onl.socialnetworkproject.servlets;
+package tms.c42onl.socialnetworkproject.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -6,11 +6,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tms.c42onl.socialnetworkproject.config.JDBCManager;
-import tms.c42onl.socialnetworkproject.models.User;
-import tms.c42onl.socialnetworkproject.exceptions.RegistrationException;
-import tms.c42onl.socialnetworkproject.services.UserService;
-import tms.c42onl.socialnetworkproject.storages.JbdcUserStorage;
-import tms.c42onl.socialnetworkproject.storages.UserStorage;
+import tms.c42onl.socialnetworkproject.model.User;
+import tms.c42onl.socialnetworkproject.exception.RegistrationException;
+import tms.c42onl.socialnetworkproject.service.UserService;
+import tms.c42onl.socialnetworkproject.storage.JbdcUserStorage;
+import tms.c42onl.socialnetworkproject.storage.UserStorage;
 
 
 import java.io.IOException;

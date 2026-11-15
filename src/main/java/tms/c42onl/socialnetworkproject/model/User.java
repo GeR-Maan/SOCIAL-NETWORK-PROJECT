@@ -1,4 +1,4 @@
-package tms.c42onl.socialnetworkproject.models;
+package tms.c42onl.socialnetworkproject.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

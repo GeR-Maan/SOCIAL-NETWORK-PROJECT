@@ -1,7 +1,7 @@
-package tms.c42onl.socialnetworkproject.exceptions;
+package tms.c42onl.socialnetworkproject.exception;
 
 import lombok.Getter;
-import tms.c42onl.socialnetworkproject.models.User;
+import tms.c42onl.socialnetworkproject.model.User;
 
 @Getter
 public class RegistrationException extends RuntimeException {
