@@ -1,48 +1,82 @@
 package tms.c42onl.socialnetworkproject.servlets;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
+import tms.c42onl.socialnetworkproject.services.PostService;
+import tms.c42onl.socialnetworkproject.services.StubPostPhotoService;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostStorage;
 import tms.c42onl.socialnetworkproject.models.PublicUser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/posts/create")
+@MultipartConfig(maxFileSize = 5*1024*1024, maxRequestSize = 30*1024*1024)
 public class CreatePostServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private PostService postService;
 
-        request.getRequestDispatcher("/WEB-INF/views/new-post.jsp")
-                .forward(request, response);
+    @Override
+    public void init() {
+        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
+        postService = new PostService(jdbcManager, new JdbcPostStorage(), new StubPostPhotoService());
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher("/pages/create-post.jsp").forward(req, resp);
+    }
 
-        request.setCharacterEncoding("UTF-8");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
 
-        PublicUser author = (PublicUser) request.getAttribute("currentUser");
-
+        PublicUser author = (PublicUser) req.getAttribute("currentUser");
         if (author == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        Long authorId = author.getId();
+
+        String text = req.getParameter("text");
+
+        List<Part> photos = new ArrayList<>();
+
+        try {
+            for (Part part : req.getParts()) {
+                if ("photos".equals(part.getName()) && part.getSize() > 0) {
+                    photos.add(part);
+                }
+            }
+        } catch (IllegalStateException e) {
+            showForm(req, resp, "Файл слишком большой: не больше 5 МБ на фото", text);
             return;
         }
 
-        String title = request.getParameter("title");
-        String content = request.getParameter("content");
+        try {
+            Long postId = postService.createPost(authorId, text, photos);
+            resp.sendRedirect(req.getContextPath() + "/posts?id=" + postId);
 
-        if (title == null || title.isBlank() || content == null || content.isBlank()) {
-            request.setAttribute("error", "Заголовок и текст поста не должны быть пустыми");
-            request.getRequestDispatcher("/WEB-INF/views/new-post.jsp")
-                    .forward(request, response);
-            return;
+        } catch (IllegalArgumentException e) {
+
+            showForm(req, resp, e.getMessage(), text);
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            showForm(req, resp, "Не удалось сохранить пост, попробуйте ещё раз", text);
         }
+    }
 
-        response.sendRedirect(request.getContextPath() + "/posts");
+    private void showForm(HttpServletRequest req, HttpServletResponse resp, String error, String text) throws ServletException, IOException {
+        req.setAttribute("error", error);
+        req.setAttribute("text", text);
+        req.getRequestDispatcher("/pages/create-post.jsp").forward(req, resp);
     }
 }
