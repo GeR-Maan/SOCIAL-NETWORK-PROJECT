@@ -2,6 +2,7 @@ package tms.c42onl.socialnetworkproject.storages;
 
 import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.models.User;
+import tms.c42onl.socialnetworkproject.models.PublicUser;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ public class JbdcUserStorage implements UserStorage{
 
     private static final String FIND_BY_LOGIN_SQL = "SELECT id, login, password, first_name, last_name, birth_date FROM users WHERE login =?";
     private static final String FIND_BY_ID_SQL = "SELECT id, login, password, first_name, last_name, birth_date FROM users WHERE id =?";
+    private static final String FIND_PUBLIC_USER_BY_ID_SQL = "SELECT id, first_name, last_name FROM users WHERE id = ?";
     private static final String INSERT_USER_SQL = "INSERT INTO users (login, password, first_name, last_name, birth_date) VALUES (?, ?, ?, ?, ?)";
     private final JDBCManager jdbcManager;
 
@@ -22,7 +24,7 @@ public class JbdcUserStorage implements UserStorage{
     public Optional<User> findByLogin(String login) {
         User[] foundUser = new User[1];
         jdbcManager.execute(connection -> {
-        try(PreparedStatement statement = connection.prepareStatement(FIND_BY_LOGIN_SQL)) {
+            try(PreparedStatement statement = connection.prepareStatement(FIND_BY_LOGIN_SQL)) {
                 statement.setString(1, login);
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
@@ -66,6 +68,41 @@ public class JbdcUserStorage implements UserStorage{
             }
         });
         return  Optional.ofNullable(foundUser[0]);
+    }
+
+    @Override
+    public Optional<PublicUser> findPublicUserById(Long id) {
+        if (id == null || id <= 0) {
+            return Optional.empty();
+        }
+
+        PublicUser[] foundUser = new PublicUser[1];
+
+        jdbcManager.execute(connection -> {
+            try (PreparedStatement statement =
+                         connection.prepareStatement(FIND_PUBLIC_USER_BY_ID_SQL)) {
+
+                statement.setLong(1, id);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+
+                        foundUser[0] = new PublicUser(
+                                resultSet.getLong("id"),
+                                null,
+                                firstName + " " + lastName
+                        );
+                    }
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return Optional.ofNullable(foundUser[0]);
     }
 
     @Override
