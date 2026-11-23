@@ -11,6 +11,7 @@ import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.services.PostService;
 import tms.c42onl.socialnetworkproject.services.StubPostPhotoService;
 import tms.c42onl.socialnetworkproject.storages.JdbcPostStorage;
+import tms.c42onl.socialnetworkproject.models.PublicUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +38,12 @@ public class CreatePostServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
 
-        // Моя заглушка пока нет входа пользователя автор это юзер с id 1.
-        Long authorId = 1L;
+        PublicUser author = (PublicUser) req.getAttribute("currentUser");
+        if (author == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        Long authorId = author.getId();
 
         String text = req.getParameter("text");
 
@@ -57,7 +62,7 @@ public class CreatePostServlet extends HttpServlet {
 
         try {
             Long postId = postService.createPost(authorId, text, photos);
-            resp.sendRedirect(req.getContextPath() + "/post?id=" + postId);
+            resp.sendRedirect(req.getContextPath() + "/posts?id=" + postId);
 
         } catch (IllegalArgumentException e) {
 

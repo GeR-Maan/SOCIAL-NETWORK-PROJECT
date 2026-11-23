@@ -17,6 +17,11 @@ public class JDBCManager  {
         public void execute(Connection connection);
     }
 
+    @FunctionalInterface
+    public interface PostgresFunction<T> {
+        T apply(Connection connection) throws SQLException;
+    }
+
     public void execute(PostgresWork postgresWork) {
         try (Connection connection = provider.getConnection()) {
             connection.setAutoCommit(false);
@@ -24,6 +29,33 @@ public class JDBCManager  {
                 postgresWork.execute(connection);
                 connection.commit();
                 System.out.println("commit successful");
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    connection.rollback();
+                    System.out.println("rollback successful");
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T executeWithResult(PostgresFunction<T> postgresFunction) {
+        try (Connection connection = provider.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                // Выполняем работу и сохраняем результат
+                T result = postgresFunction.apply(connection);
+
+                connection.commit();
+                System.out.println("commit successful");
+
+                // Возвращаем полученный результат наружу
+                return result;
             } catch (SQLException | RuntimeException e) {
                 try {
                     connection.rollback();
