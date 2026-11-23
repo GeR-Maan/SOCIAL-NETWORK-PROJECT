@@ -1,8 +1,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<jsp:include page="/pages/common/header.jsp" />
-<jsp:include page="/pages/common/navbar.jsp" />
+<jsp:include page="/WEB-IN/views/common/header.jsp" />
+<jsp:include page="/WEB-IN/views/common/navbar.jsp" />
 
 
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
@@ -37,4 +37,4 @@
     </div>
 </div>
 
-<jsp:include page="/pages/common/footer.jsp" />
+<jsp:include page="/WEB-IN/views/common/footer.jsp" />
