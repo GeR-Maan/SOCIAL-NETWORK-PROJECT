@@ -5,7 +5,7 @@
     <div class="post-images row g-2 mt-2">
         <c:forEach var="img" items="${images}">
             <div class="col-4">
-                <img src="${pageContext.request.contextPath}/posts/${img.postId}/images/${img.filePath}"
+                <img src="${pageContext.request.contextPath}/post-images/${img.filePath}"
                      class="img-fluid rounded"
                      alt="Фото поста">
             </div>

@@ -42,7 +42,7 @@ public class PhotoUploadHelper {
         List<Part> parts = new ArrayList<>();
         try {
             for (Part p : request.getParts()) {
-                if ("images".equals(p.getName()) && p.getSize() > 0) parts.add(p);
+                if ("photos".equals(p.getName()) && p.getSize() > 0) parts.add(p);
             }
         } catch (Exception e) {
             throw new PhotoException("Не удалось прочитать загруженные файлы");

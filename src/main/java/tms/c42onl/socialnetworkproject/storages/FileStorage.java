@@ -16,11 +16,18 @@ public class FileStorage {
         String originalName = part.getSubmittedFileName();
         String ext = getExtension(originalName);        // getExtension сам умеет с null
 
-        String filename = postId + "_" + UUID.randomUUID() + ext;
+        String filename = UUID.randomUUID() + ext;
         Path target = baseDir.resolve(filename);
         Files.createDirectories(baseDir);
         try (InputStream in = part.getInputStream()) {
             Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException failure) {
+            try {
+                Files.deleteIfExists(target);
+            } catch (IOException cleanupFailure) {
+                failure.addSuppressed(cleanupFailure);
+            }
+            throw failure;
         }
         return filename;
     }

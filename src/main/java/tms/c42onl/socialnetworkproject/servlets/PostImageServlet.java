@@ -12,27 +12,35 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@WebServlet("/posts/*/images/*")
+@WebServlet("/post-images/*")
 public class PostImageServlet extends HttpServlet {
     private final FileStorage fileStorage = new FileStorage();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String pathInfo = req.getPathInfo();
-        String[] parts = pathInfo.split("/");
-        if (parts.length < 4) { resp.sendError(400); return; }
+        String path = req.getPathInfo();
 
-        long postId = Long.parseLong(parts[1]);
-        String filename = parts[3];
+        // FileStorage сохраняет фотографии под именем UUID с расширением.
+        if (path == null || !path.matches(
+                "/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\\.[a-zA-Z0-9]+)?")) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
+        String filename = path.substring(1);
         Path file = fileStorage.resolve(filename);
-        if (!Files.exists(file)) { resp.sendError(404); return; }
+        if (!Files.isRegularFile(file)) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
-        resp.setContentType(getServletContext().getMimeType(filename));
-        resp.setContentLengthLong(Files.size(file));
-        try (InputStream in = Files.newInputStream(file);
-             OutputStream out = resp.getOutputStream()) {
-            in.transferTo(out);
+        try (var input = new java.io.BufferedInputStream(Files.newInputStream(file))) {
+            String contentType = java.net.URLConnection.guessContentTypeFromStream(input);
+            resp.setContentType(contentType != null && contentType.startsWith("image/")
+                    ? contentType : "application/octet-stream");
+            resp.setHeader("X-Content-Type-Options", "nosniff");
+            resp.setContentLengthLong(Files.size(file));
+            input.transferTo(resp.getOutputStream());
         }
     }
 }
