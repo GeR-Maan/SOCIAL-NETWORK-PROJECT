@@ -73,7 +73,7 @@ public class AuthenticationFilter implements Filter {
 
         return java.util.Set.of(
                 "/posts/create",
-                "/comments/create",
+                "/comments",
                 "/reactions/toggle",
                 "/subscriptions/toggle",
                 "/subscriptions/feed",
