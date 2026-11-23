@@ -9,7 +9,8 @@
             <h1 class="h4 mb-3">Новый пост</h1>
 
             <form method="post"
-                  action="${pageContext.request.contextPath}/posts/create">
+                  action="${pageContext.request.contextPath}/posts/create"
+                  enctype="multipart/form-data"> <%--Danil add --%>
 
                 <div class="mb-3">
                     <label class="form-label" for="title">Заголовок</label>
@@ -30,6 +31,7 @@
                 </div>
 
                 <%-- ID автора НЕ передаём через форму --%>
+                <jsp:include page="/WEB-IN/views/common/photo-input.jspf" /><%--Danil add --%>
 
                 <button class="btn btn-primary" type="submit">
                     Опубликовать
