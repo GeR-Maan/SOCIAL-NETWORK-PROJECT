@@ -57,7 +57,7 @@ public class RegisterServlet extends HttpServlet {
 
         try {
             userService.registerUser(login, password, firstName, lastName, birthDate);
-            resp.sendRedirect(req.getContextPath() + "/log");
+            resp.sendRedirect(req.getContextPath() + "/login");
         } catch (RegistrationException e) {
             req.setAttribute("errorMessage", e.getMessage());
             req.setAttribute("invalidUser", e.getInvalidUser());
