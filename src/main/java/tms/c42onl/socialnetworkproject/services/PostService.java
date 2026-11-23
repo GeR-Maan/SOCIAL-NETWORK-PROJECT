@@ -1,6 +1,7 @@
 package tms.c42onl.socialnetworkproject.services;
 
-import jakarta.servlet.http.Part;
+import tms.c42onl.socialnetworkproject.models.PostImage;
+import tms.c42onl.socialnetworkproject.storages.PostImageStorage;
 import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.models.Post;
 import tms.c42onl.socialnetworkproject.storages.PostStorage;
@@ -19,16 +20,15 @@ public class PostService {
     private static final int MAX_PHOTOS = 5;
     private final JDBCManager jdbcManager;
     private final PostStorage postStorage;
-    private final PostPhotoService photoService;
+    private final PostImageStorage imageStorage;
 
-    public PostService(JDBCManager jdbcManager, PostStorage postStorage, PostPhotoService photoService) {
+    public PostService(JDBCManager jdbcManager, PostStorage postStorage, PostImageStorage imageStorage) {
         this.jdbcManager = jdbcManager;
         this.postStorage = postStorage;
-        this.photoService = photoService;
+        this.imageStorage = imageStorage;
     }
 
-
-    public Long createPost(Long authorId, String text, List<Part> photos) {
+    public Long createPost(Long authorId, String text, List<PostImage> photos) {
 
         boolean noText = text == null || text.isBlank();
         if (noText && photos.isEmpty()) {
@@ -42,12 +42,10 @@ public class PostService {
         post.setAuthorId(authorId);
         post.setText(text);
 
-        jdbcManager.execute(connection -> {
-            Long id = postStorage.save(connection, post);
-            post.setId(id);
-            photoService.save(connection, id, photos);
+        return jdbcManager.executeWithResult(connection -> {
+            Long postId = postStorage.save(connection, post);
+            imageStorage.save(connection, postId, photos);
+            return postId;
         });
-
-        return post.getId();
     }
 }

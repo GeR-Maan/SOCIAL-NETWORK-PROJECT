@@ -12,6 +12,8 @@ import tms.c42onl.socialnetworkproject.services.PostService;
 import tms.c42onl.socialnetworkproject.services.StubPostPhotoService;
 import tms.c42onl.socialnetworkproject.storages.JdbcPostStorage;
 import tms.c42onl.socialnetworkproject.models.PublicUser;
+import tms.c42onl.socialnetworkproject.services.PhotoUploadHelper;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostImageStorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class CreatePostServlet extends HttpServlet {
     @Override
     public void init() {
         JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
-        postService = new PostService(jdbcManager, new JdbcPostStorage(), new StubPostPhotoService());
+        postService = new PostService(jdbcManager, new JdbcPostStorage(), new JdbcPostImageStorage());
     }
 
     @Override
@@ -45,33 +47,37 @@ public class CreatePostServlet extends HttpServlet {
         }
         Long authorId = author.getId();
 
-        String text = req.getParameter("text");
-
-        List<Part> photos = new ArrayList<>();
-
+        String text;
         try {
-            for (Part part : req.getParts()) {
-                if ("photos".equals(part.getName()) && part.getSize() > 0) {
-                    photos.add(part);
-                }
-            }
+            text = req.getParameter("text");
         } catch (IllegalStateException e) {
-            showForm(req, resp, "Файл слишком большой: не больше 5 МБ на фото", text);
+            showForm(req, resp, "Файл слишком большой: не больше 5 МБ на фото", null);
             return;
         }
 
+        PhotoUploadHelper.Result upload;
         try {
-            Long postId = postService.createPost(authorId, text, photos);
-            resp.sendRedirect(req.getContextPath() + "/posts?id=" + postId);
-
-        } catch (IllegalArgumentException e) {
-
+            upload = PhotoUploadHelper.handle(req);
+        } catch (PhotoUploadHelper.PhotoException e) {
             showForm(req, resp, e.getMessage(), text);
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            showForm(req, resp, "Не удалось сохранить пост, попробуйте ещё раз", text);
+            return;
         }
+
+        Long postId;
+        try {
+            postId = postService.createPost(authorId, text, upload.getImages());
+        } catch (IllegalArgumentException e) {
+            upload.cleanup();
+            showForm(req, resp, e.getMessage(), text);
+            return;
+        } catch (RuntimeException e) {
+            upload.cleanup();
+            getServletContext().log("Не удалось сохранить пост с фотографиями", e);
+            showForm(req, resp, "Не удалось сохранить пост, попробуйте ещё раз", text);
+            return;
+        }
+
+        resp.sendRedirect(req.getContextPath() + "/posts?id=" + postId);
     }
 
     private void showForm(HttpServletRequest req, HttpServletResponse resp, String error, String text) throws ServletException, IOException {
