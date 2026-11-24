@@ -10,6 +10,8 @@ import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.storages.CommentStorage;
 import tms.c42onl.socialnetworkproject.storages.JdbcCommentStorage;
 import tms.c42onl.socialnetworkproject.services.CommentService;
+import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
+import tms.c42onl.socialnetworkproject.service.ReactionService;
 
 import java.util.Collection;
 
@@ -37,6 +39,9 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
         CommentStorage commentStorage = new JdbcCommentStorage(provider);
         CommentService commentService = new CommentService(commentStorage);
         sce.getServletContext().setAttribute("commentService", commentService);
+        ReactionStorage reactionStorage = new ReactionStorage(provider);
+        ReactionService reactionService = new ReactionService(reactionStorage);
+        sce.getServletContext().setAttribute("reactionService", reactionService);
     }
 
     @Override
@@ -44,5 +49,6 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
         sce.getServletContext().removeAttribute("connection");
         sce.getServletContext().removeAttribute("provider");
         sce.getServletContext().removeAttribute("commentService");
+        sce.getServletContext().removeAttribute("reactionService");
     }
 }
