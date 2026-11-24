@@ -11,11 +11,11 @@ import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
 // Сервис для работы с реакциями
 public class ReactionService {
 
-    private final ReactionStorage reactionStorage = ReactionStorage.getReactionStorage();
+    private final ReactionStorage reactionStorage;
 
-    @Getter
-    private static final ReactionService reactionService = new ReactionService();
-    private ReactionService() {}
+    public ReactionService(ReactionStorage reactionStorage) {
+        this.reactionStorage = reactionStorage;
+    }
 
     // Изменяет или устанавливает реакцию на пост
     public boolean changeReaction(Long userId, Long postId, String reactionTypeString) {

@@ -21,7 +21,10 @@ public class ReactionServlet extends HttpServlet {
     //Создаёт единственные экземпляры хранилища и сервиса
     public void init() throws ServletException {
         super.init();
-        this.reactionService = ReactionService.getReactionService();
+        this.reactionService = (ReactionService) getServletContext().getAttribute("reactionService");
+        if (this.reactionService == null) {
+            throw new ServletException("ReactionService не инициализирован");
+        }
     }
 
     @Override
@@ -31,7 +34,7 @@ public class ReactionServlet extends HttpServlet {
         Long postId = Long.parseLong(request.getParameter("postId"));
         if (userId == null) {
             request.getSession().setAttribute("error", "Необходимо войти в систему");
-            response.sendRedirect("/reaction?postId=" + postId);
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -42,11 +45,11 @@ public class ReactionServlet extends HttpServlet {
             if (!isSave) {
                 request.getSession().setAttribute("error", "Не удалось поставить реакцию");
             }
-            response.sendRedirect("/reaction?postId=" + postId);
+            response.sendRedirect(request.getContextPath() + "/posts?id=" + postId);
         }catch (Exception e){
             e.printStackTrace();
             request.getSession().setAttribute("error", "Произошла ошибка на сервере");
-            response.sendRedirect("/reaction?postId=" + postId);
+            response.sendRedirect(request.getContextPath() + "/posts?id=" + postId);
         }
     }
 
@@ -58,6 +61,7 @@ public class ReactionServlet extends HttpServlet {
         request.setAttribute("isAuthorized", isAuthorized);
 
         Long postId = Long.parseLong(request.getParameter("postId"));
+        request.setAttribute("postId", postId);
 
         try {
             ReactionCount reactionCount = reactionService.getCounters(postId);

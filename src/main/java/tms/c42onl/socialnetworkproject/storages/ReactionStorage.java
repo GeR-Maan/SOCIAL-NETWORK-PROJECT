@@ -5,7 +5,7 @@ import tms.c42onl.socialnetworkproject.exceptions.ReactionException;
 import tms.c42onl.socialnetworkproject.models.reactions.Reaction;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionCount;
 import tms.c42onl.socialnetworkproject.models.reactions.ReactionType;
-import tms.c42onl.socialnetworkproject.service.ConnectionProvider;
+import tms.c42onl.socialnetworkproject.config.ConnectionProvider;
 
 import static tms.c42onl.socialnetworkproject.models.reactions.ReactionType.NOTHING;
 
@@ -16,10 +16,11 @@ import java.sql.SQLException;
 
 //Управление реакцией на посты в БД
 public class ReactionStorage {
-    @Getter
-    private static final ReactionStorage reactionStorage = new ReactionStorage();
+    private final ConnectionProvider provider;
 
-    private ReactionStorage() {}
+    public ReactionStorage(ConnectionProvider provider) {
+        this.provider = provider;
+    }
 
     //Сохраняет или обновляет реакцию
     public void saveReaction(Reaction reaction) {
@@ -35,7 +36,7 @@ public class ReactionStorage {
             ON CONFLICT (user_id, post_id) DO UPDATE SET reaction_type = EXCLUDED.reaction_type;
             """;
 
-        try (Connection connection = ConnectionProvider.getConnection()) {
+        try (Connection connection = provider.getConnection()) {
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())) {
                 preparedStatement.setLong(1, reaction.getUserId());
@@ -53,10 +54,10 @@ public class ReactionStorage {
     //Удаляет реакцию на конкретный пост из БД
     public void deleteReaction(Reaction reaction) {
         String sqlQuery = """
-                            DELETE FROM reactions 
+                            DELETE FROM reactions
                             WHERE user_id = ? AND post_id = ?;
                           """;
-        try (Connection connection = ConnectionProvider.getConnection()) {
+        try (Connection connection = provider.getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())) {
                 preparedStatement.setLong(1, reaction.getUserId());
                 preparedStatement.setLong(2, reaction.getPostId());
@@ -75,7 +76,7 @@ public class ReactionStorage {
                             WHERE user_id = ? AND post_id = ?;
                           """;
 
-        try (Connection connection = ConnectionProvider.getConnection();
+        try (Connection connection = provider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())) {
                 preparedStatement.setLong(1, userId);
                 preparedStatement.setLong(2, postId);
@@ -104,7 +105,7 @@ public class ReactionStorage {
                             WHERE post_id = ?;
                           """;
 
-        try (Connection connection = ConnectionProvider.getConnection();
+        try (Connection connection = provider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())) {
 
             preparedStatement.setLong(1, postId);
@@ -131,7 +132,7 @@ public class ReactionStorage {
                             SELECT COUNT(*) FROM posts WHERE id = ?
                           """;
 
-        try (Connection connection = ConnectionProvider.getConnection();
+        try (Connection connection = provider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.trim())) {
             preparedStatement.setLong(1,postId);
             ResultSet resultSet = preparedStatement.executeQuery();
