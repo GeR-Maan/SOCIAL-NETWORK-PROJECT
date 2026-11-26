@@ -1,0 +1,14 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:if test="${not empty images}">
+    <div class="post-images row g-2 mt-2">
+        <c:forEach var="img" items="${images}">
+            <div class="col-4">
+                <img src="${pageContext.request.contextPath}/post-images/${img.filePath}"
+                     class="img-fluid rounded"
+                     alt="Фото поста">
+            </div>
+        </c:forEach>
+    </div>
+</c:if>

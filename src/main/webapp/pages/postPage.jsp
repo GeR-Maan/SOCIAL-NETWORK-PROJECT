@@ -39,8 +39,9 @@
         <div class="card shadow-sm mb-3">
             <div class="card-body d-flex flex-wrap gap-2">
                 <c:forEach var="p" items="${page.photos}">
-                    <img src="${p.url}" alt=""
-                         class="rounded" style="max-width: 200px; max-height: 200px;">
+                    <img src="${pageContext.request.contextPath}/post-images/${p.filePath}"
+                         alt="Фотография к посту" class="rounded"
+                         style="max-width: 200px; max-height: 200px;">
                 </c:forEach>
             </div>
         </div>
@@ -48,7 +49,7 @@
 
 
     <jsp:include page="/pages/blocks/_reactions.jsp"/>
-    <jsp:include page="/pages/blocks/_comments.jsp"/>
+    <jsp:include page="/WEB-INF/views/fragments/comments.jsp"/>
 
 </main>
 </body>

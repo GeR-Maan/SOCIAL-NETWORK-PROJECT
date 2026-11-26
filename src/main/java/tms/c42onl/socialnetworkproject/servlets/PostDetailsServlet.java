@@ -6,15 +6,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import tms.c42onl.socialnetworkproject.config.ConnectionProvider;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostImageStorage;
 import tms.c42onl.socialnetworkproject.exceptions.PostNotFoundException;
 import tms.c42onl.socialnetworkproject.models.PostPage;
 import tms.c42onl.socialnetworkproject.models.SessionCurrentUserProvider;
 import tms.c42onl.socialnetworkproject.service.ReactionService;
 import tms.c42onl.socialnetworkproject.services.CommentService;
 import tms.c42onl.socialnetworkproject.services.DefaultPostDetailsService;
-import tms.c42onl.socialnetworkproject.services.PhotoService;
 import tms.c42onl.socialnetworkproject.services.PostDetailsService;
-import tms.c42onl.socialnetworkproject.services.StubPhotoService;
 import tms.c42onl.socialnetworkproject.storages.JdbcCommentStorage;
 import tms.c42onl.socialnetworkproject.storages.JdbcPostDetailsStorage;
 import tms.c42onl.socialnetworkproject.storages.PostDetailsStorage;
@@ -35,6 +35,18 @@ public class PostDetailsServlet extends HttpServlet {
             throw new ServletException("ConnectionProvider не инициализирован (TMS-32)");
         }
 
+        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
+        CommentService commentService = (CommentService) getServletContext().getAttribute("commentService");
+        ReactionService reactionService = (ReactionService) getServletContext().getAttribute("reactionService");
+
+        postDetailsService = new DefaultPostDetailsService(
+                new JdbcPostDetailsStorage(provider),
+                jdbcManager,
+                new JdbcPostImageStorage(),
+                commentService,
+                reactionService
+        );
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -58,12 +70,12 @@ public class PostDetailsServlet extends HttpServlet {
             req.setAttribute("countLike", page.getReactions().getCountLike());
             req.setAttribute("countDislike", page.getReactions().getCountDislike());
             req.setAttribute("reactionType", page.getCurrentUserReaction());
-            req.getRequestDispatcher("/WEB-INF/views/posts/details.jsp").forward(req, resp);
+            req.getRequestDispatcher("/pages/postPage.jsp").forward(req, resp);
 
         } catch (PostNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             req.setAttribute("missingPostId", postId);
-            req.getRequestDispatcher("/WEB-INF/views/posts/not-found.jsp").forward(req, resp);
+            req.getRequestDispatcher("/pages/postNotFound.jsp").forward(req, resp);
         }
     }
 
@@ -94,5 +106,3 @@ public class PostDetailsServlet extends HttpServlet {
         }
     }
 }
-}
-

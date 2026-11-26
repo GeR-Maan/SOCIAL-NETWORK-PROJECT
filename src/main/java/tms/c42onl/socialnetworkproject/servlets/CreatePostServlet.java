@@ -1,48 +1,88 @@
 package tms.c42onl.socialnetworkproject.servlets;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import tms.c42onl.socialnetworkproject.config.JDBCManager;
+import tms.c42onl.socialnetworkproject.services.PostService;
+import tms.c42onl.socialnetworkproject.services.StubPostPhotoService;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostStorage;
 import tms.c42onl.socialnetworkproject.models.PublicUser;
+import tms.c42onl.socialnetworkproject.services.PhotoUploadHelper;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostImageStorage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/posts/create")
+@MultipartConfig(maxFileSize = 5*1024*1024, maxRequestSize = 30*1024*1024)
 public class CreatePostServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private PostService postService;
 
-        request.getRequestDispatcher("/WEB-INF/views/new-post.jsp")
-                .forward(request, response);
+    @Override
+    public void init() {
+        JDBCManager jdbcManager = (JDBCManager) getServletContext().getAttribute("connection");
+        postService = new PostService(jdbcManager, new JdbcPostStorage(), new JdbcPostImageStorage());
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher("/pages/create-post.jsp").forward(req, resp);
+    }
 
-        request.setCharacterEncoding("UTF-8");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
 
-        PublicUser author = (PublicUser) request.getAttribute("currentUser");
-
+        PublicUser author = (PublicUser) req.getAttribute("currentUser");
         if (author == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        Long authorId = author.getId();
+
+        String text;
+        try {
+            text = req.getParameter("text");
+        } catch (IllegalStateException e) {
+            showForm(req, resp, "Файл слишком большой: не больше 5 МБ на фото", null);
             return;
         }
 
-        String title = request.getParameter("title");
-        String content = request.getParameter("content");
-
-        if (title == null || title.isBlank() || content == null || content.isBlank()) {
-            request.setAttribute("error", "Заголовок и текст поста не должны быть пустыми");
-            request.getRequestDispatcher("/WEB-INF/views/new-post.jsp")
-                    .forward(request, response);
+        PhotoUploadHelper.Result upload;
+        try {
+            upload = PhotoUploadHelper.handle(req);
+        } catch (PhotoUploadHelper.PhotoException e) {
+            showForm(req, resp, e.getMessage(), text);
             return;
         }
 
-        response.sendRedirect(request.getContextPath() + "/posts");
+        Long postId;
+        try {
+            postId = postService.createPost(authorId, text, upload.getImages());
+        } catch (IllegalArgumentException e) {
+            upload.cleanup();
+            showForm(req, resp, e.getMessage(), text);
+            return;
+        } catch (RuntimeException e) {
+            upload.cleanup();
+            getServletContext().log("Не удалось сохранить пост с фотографиями", e);
+            showForm(req, resp, "Не удалось сохранить пост, попробуйте ещё раз", text);
+            return;
+        }
+
+        resp.sendRedirect(req.getContextPath() + "/posts?id=" + postId);
+    }
+
+    private void showForm(HttpServletRequest req, HttpServletResponse resp, String error, String text) throws ServletException, IOException {
+        req.setAttribute("error", error);
+        req.setAttribute("text", text);
+        req.getRequestDispatcher("/pages/create-post.jsp").forward(req, resp);
     }
 }
