@@ -10,6 +10,11 @@ import tms.c42onl.socialnetworkproject.config.JDBCManager;
 import tms.c42onl.socialnetworkproject.storages.CommentStorage;
 import tms.c42onl.socialnetworkproject.storages.JdbcCommentStorage;
 import tms.c42onl.socialnetworkproject.services.CommentService;
+import tms.c42onl.socialnetworkproject.services.DefaultPostFeedService;
+import tms.c42onl.socialnetworkproject.services.PostFeedService;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostFeedStorage;
+import tms.c42onl.socialnetworkproject.storages.JdbcPostImageStorage;
+import tms.c42onl.socialnetworkproject.storages.PostFeedStorage;
 import tms.c42onl.socialnetworkproject.storages.ReactionStorage;
 import tms.c42onl.socialnetworkproject.service.ReactionService;
 
@@ -42,6 +47,13 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
         ReactionStorage reactionStorage = new ReactionStorage(provider);
         ReactionService reactionService = new ReactionService(reactionStorage);
         sce.getServletContext().setAttribute("reactionService", reactionService);
+
+        PostFeedStorage feedStorage = new JdbcPostFeedStorage(provider);
+        PostFeedService feedService = new DefaultPostFeedService(
+                feedStorage, jdbcManager, new JdbcPostImageStorage(),
+                reactionService, commentService
+        );
+        sce.getServletContext().setAttribute("postFeedService", feedService);
     }
 
     @Override
@@ -50,5 +62,6 @@ public class ServletContextListener implements jakarta.servlet.ServletContextLis
         sce.getServletContext().removeAttribute("provider");
         sce.getServletContext().removeAttribute("commentService");
         sce.getServletContext().removeAttribute("reactionService");
+        sce.getServletContext().removeAttribute("postFeedService");
     }
 }
